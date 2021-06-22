@@ -24,25 +24,9 @@ const drawerData = [
     icon: iconHome,
   },
   {
-    name: 'Calendar',
-    icon: iconCalendar,
-  },
-  {
-    name: 'Grids',
-    icon: iconGrids,
-  },
-  {
-    name: 'Pages',
-    icon: iconPages,
-  },
-  {
-    name: 'Components',
+    name: 'Customers',
     icon: iconComponents,
   },
-  {
-    name: 'Customers',
-    icon: iconComponents
-  }
 ];
 
 const Drawer = createDrawerNavigator();
@@ -56,8 +40,8 @@ function CustomDrawerContent(props) {
           source={require('../../../assets/images/drawer/user.png')}
         />
         <View style={{ paddingLeft: 15 }}>
-          <Text style={styles.userName}>John Doe</Text>
-          <Text style={{ color: '#4BC1FD' }}>Johndoe@gmail.com</Text>
+          <Text style={styles.userName}>Charlan Santos</Text>
+          <Text style={{ color: '#4BC1FD' }}>charlan.job@gmail.com</Text>
         </View>
       </View>
       <View style={styles.divider} />
@@ -77,45 +61,6 @@ function CustomDrawerContent(props) {
           onPress={() => props.navigation.navigate(item.name)}
         />
       ))}
-      <View style={styles.divider} />
-      <DrawerItem
-        label={() => (
-          <View style={styles.menuLabelFlex}>
-            <Image
-              style={{ width: 20, height: 20}}
-              source={iconBlog}
-            />
-            <Text style={styles.menuTitle}>Blog</Text>
-          </View>
-        )}
-        onPress={() => props.navigation.navigate('Blog')}
-      />
-      <View style={styles.divider} />
-      <DrawerItem
-        label={() => (
-          <View style={styles.menuLabelFlex}>
-            <Image
-              style={{ width: 20, height: 20}}
-              source={iconSettings} 
-            />
-            <Text style={styles.menuTitle}>Settings</Text>
-          </View>
-        )}
-        onPress={() => props.navigation.navigate('Calendar')}
-      />
-      <View style={styles.divider} />
-      <DrawerItem
-        label={() => (
-          <View style={styles.menuLabelFlex}>
-            <Image
-              style={{ width: 20, height: 20}}
-              source={iconSettings} 
-            />
-            <Text style={styles.menuTitle}>**NEW** Customer</Text>
-          </View>
-        )}
-        onPress={() => props.navigation.navigate('Customers')}
-      />
     </DrawerContentScrollView>
   );
 }

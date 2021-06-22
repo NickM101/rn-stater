@@ -19,6 +19,9 @@
     "e2e:test": "detox test --configuration ios.sim.debug"
   },
   "dependencies": {
+    "@aws-sdk/client-cognito-identity": "^3.18.0",
+    "@aws-sdk/client-s3": "^3.18.0",
+    "@aws-sdk/credential-provider-cognito-identity": "^3.18.0",
     "@react-native-community/cli": "^4.10.1",
     "@react-native-community/masked-view": "^0.1.9",
     "@react-native-community/toolbar-android": "^0.1.0-rc.2",

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   View,
@@ -8,6 +8,16 @@ import {
 
 import { fonts, colors } from '../../styles';
 import { Text } from '../../components/StyledText';
+
+import {
+  S3Client,
+  CreateBucketCommand,
+  DeleteBucketCommand,
+  ListBucketsCommand,
+} from '@aws-sdk/client-s3';
+import { CognitoIdentityClient } from '@aws-sdk/client-cognito-identity';
+import { fromCognitoIdentityPool } from '@aws-sdk/credential-provider-cognito-identity';
+import { Button, TextInput } from 'react-native-paper';
 
 export default function HomeScreen({ isExtended, setIsExtended }) {
   // const rnsUrl = 'https://reactnativestarter.com';
@@ -20,6 +30,47 @@ export default function HomeScreen({ isExtended, setIsExtended }) {
   //     }
   //   });
   // };
+  const [message, setMessage] = useState('');
+  const [bucket, setBucket] = useState('');
+  const [buckets, setBuckets] = useState([]);
+
+  const region = 'us-east-1';
+
+  const client = new S3Client({
+    region,
+    credentials: fromCognitoIdentityPool({
+      client: new CognitoIdentityClient({ region }),
+      identityPoolId: '',
+    }),
+  });
+
+  useEffect(() => {
+    const listBuckets = async () => {
+      try {
+        const data = await client.send(new ListBucketsCommand({}));
+        console.log('Success', data.Buckets);
+        return setBuckets(data.Buckets);
+      } catch (err) {
+        console.log('Error', err);
+      }
+    };
+    return () => {
+      listBuckets;
+    };
+  }, []);
+
+  const createBucket = async () => {
+    setMessage('');
+    try {
+      await client.send(new CreateBucketCommand({ Bucket: bucket }));
+      setMessage(`Bucket "${bucket}" created.`);
+    } catch (e) {
+      setMessage('Bucket not implemented');
+    }
+  };
+
+  // console.log('client', client.defaultUserAgentProvider)
+  console.log('buckets', buckets);
 
   return (
     <View style={styles.container}>
@@ -32,40 +83,20 @@ export default function HomeScreen({ isExtended, setIsExtended }) {
           <Text size={20} white>
             Home
           </Text>
-        </View>
-        <View style={styles.section}>
-          <Text color="#19e7f7" size={15}>
-            The smartest Way to build your mobile app
-          </Text>
           <Text size={30} bold white style={styles.title}>
-            React Native Starter
+            Customer Management
           </Text>
         </View>
-        <View style={[styles.section, styles.sectionLarge]}>
-          <Text color="#19e7f7" hCenter size={15} style={styles.description}>
-            {' '}
-            A powerful starter project that bootstraps development of your
-            mobile application and saves you $20 000*
-          </Text>
-          <View style={styles.priceContainer}>
-            <View style={{ flexDirection: 'row' }}>
-              <Text white bold size={50} style={styles.price}>
-                {isExtended ? '$499' : '$99'}
-              </Text>
-            </View>
-            <TouchableOpacity
-              style={styles.priceLink}
-              onPress={() =>
-                isExtended ? setIsExtended(false) : setIsExtended(true)
-              }
-            >
-              <Text white size={14}>
-                {isExtended
-                  ? 'Multiple Applications License'
-                  : 'Single Application License'}
-              </Text>
-            </TouchableOpacity>
-          </View>
+<View><Text style={{ color: 'white'}}>Total Bucket List: {buckets.length}</Text></View>
+        <View style={styles.section}>
+          <Text>{message}</Text>
+          <TextInput
+            style={{ width: 200 }}
+            label={'bucket name'}
+            value={bucket}
+            onChangeText={text => setBucket(text)}
+          />
+          <Button onPress={() => createBucket()}>Create Bucket</Button>
         </View>
       </ImageBackground>
     </View>
@@ -80,7 +111,7 @@ const styles = StyleSheet.create({
   },
   bgImage: {
     flex: 1,
-    marginHorizontal: -20,
+    // marginHorizontal: -20,
   },
   section: {
     flex: 1,
